@@ -2,17 +2,22 @@ package com.example.apptienda.ui.theme
 
 
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,35 +25,215 @@ import com.example.apptienda.model.local.AppDatabase
 import com.example.apptienda.model.repository.CarritoRepository
 import com.example.apptienda.model.repository.ProductoRepository
 import com.example.apptienda.model.repository.UsuarioRepository
-import com.example.apptienda.viewmodel.CarritoViewModel
-import com.example.apptienda.viewmodel.ProductoViewModel
-import com.example.apptienda.viewmodel.UsuarioViewModel
-import com.example.apptienda.viewmodel.ViewModelFactory
+import com.example.apptienda.viewmodel.*
 
 @Composable
-fun FormScreen() {
+fun MainScreen() {
+    var selectedTab by remember { mutableStateOf(0) }
+
+    Scaffold(
+        bottomBar = {
+            NavigationBar(containerColor = NegroFondo) {
+                NavigationBarItem(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    icon = { Icon(Icons.Filled.AccountCircle, contentDescription = null, tint = VerdeNeon) },
+                    label = { Text("Cuenta", color = BlancoTexto) }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = null, tint = VerdeNeon) },
+                    label = { Text("Tienda", color = BlancoTexto) }
+                )
+            }
+        },
+        containerColor = NegroFondo
+    ) { padding ->
+        Box(modifier = Modifier.padding(padding)) {
+            when (selectedTab) {
+                0 -> CuentaScreen()
+                1 -> TiendaScreen()
+            }
+        }
+    }
+}
+
+@Composable
+fun CuentaScreen() {
     val context = LocalContext.current
+    val database = AppDatabase.getDatabase(context)
+    val usuarioDao = database.usuarioDao()
+    val usuarioRepository = UsuarioRepository(usuarioDao)
+    val factory = ViewModelFactory(
+        ProductoRepository(database.productoDao()),
+        usuarioRepository,
+        CarritoRepository(database.carritoDao())
+    )
+    val usuarioVM: UsuarioViewModel = viewModel(factory = factory)
 
+    val usuario by usuarioVM.usuario.collectAsState()
 
+    var nombre by remember { mutableStateOf("") }
+    var correo by remember { mutableStateOf("") }
+    var edad by remember { mutableStateOf("") }
+    var genero by remember { mutableStateOf("Otro") }
+    var contrasena by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .background(NegroFondo)
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("👤 Cuenta de Usuario", color = VerdeNeon, fontSize = 24.sp)
+        Spacer(Modifier.height(12.dp))
+
+        Card(
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Column(Modifier.padding(16.dp)) {
+                if (usuario == null) {
+                    Text("Registro / Ingreso", color = BlancoTexto, fontSize = 18.sp)
+                    Spacer(Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = nombre,
+                        onValueChange = { nombre = it },
+                        label = { Text("Nombre completo") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = BlancoTexto,
+                            unfocusedTextColor = GrisClaroTexto,
+                            cursorColor = VerdeNeon,
+                            focusedBorderColor = VerdeNeon,
+                            unfocusedBorderColor = Color.Gray
+                        )
+                    )
+
+                    OutlinedTextField(
+                        value = correo,
+                        onValueChange = { correo = it },
+                        label = { Text("Correo electrónico") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = BlancoTexto,
+                            unfocusedTextColor = GrisClaroTexto,
+                            cursorColor = VerdeNeon,
+                            focusedBorderColor = VerdeNeon,
+                            unfocusedBorderColor = Color.Gray
+                        )
+                    )
+
+                    OutlinedTextField(
+                        value = edad,
+                        onValueChange = { edad = it },
+                        label = { Text("Edad") },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = BlancoTexto,
+                            unfocusedTextColor = GrisClaroTexto,
+                            cursorColor = VerdeNeon,
+                            focusedBorderColor = VerdeNeon,
+                            unfocusedBorderColor = Color.Gray
+                        )
+                    )
+
+                    Spacer(Modifier.height(6.dp))
+                    Text("Género", color = BlancoTexto)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        listOf("Masculino", "Femenino", "Otro").forEach { opcion ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .selectable(
+                                        selected = (genero == opcion),
+                                        onClick = { genero = opcion }
+                                    )
+                            ) {
+                                RadioButton(
+                                    selected = (genero == opcion),
+                                    onClick = { genero = opcion },
+                                    colors = RadioButtonDefaults.colors(
+                                        selectedColor = VerdeNeon,
+                                        unselectedColor = Color.Gray
+                                    )
+                                )
+                                Text(opcion, color = BlancoTexto)
+                            }
+                        }
+                    }
+
+                    OutlinedTextField(
+                        value = contrasena,
+                        onValueChange = { contrasena = it },
+                        label = { Text("Contraseña (mínimo 6 caracteres)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = BlancoTexto,
+                            unfocusedTextColor = GrisClaroTexto,
+                            cursorColor = VerdeNeon,
+                            focusedBorderColor = VerdeNeon,
+                            unfocusedBorderColor = Color.Gray
+                        )
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = { usuarioVM.registrar(nombre, correo, contrasena) },
+                            colors = ButtonDefaults.buttonColors(containerColor = VerdeNeon)
+                        ) {
+                            Text("Registrar", color = NegroFondo)
+                        }
+                        Button(
+                            onClick = { usuarioVM.login(correo, contrasena) },
+                            colors = ButtonDefaults.buttonColors(containerColor = VerdeNeon)
+                        ) {
+                            Text("Ingresar", color = NegroFondo)
+                        }
+                    }
+                } else {
+                    Text("Hola, ${usuario!!.nombre}", color = BlancoTexto, fontSize = 20.sp)
+                    Spacer(Modifier.height(8.dp))
+                    Button(
+                        onClick = { usuarioVM.logout() },
+                        colors = ButtonDefaults.buttonColors(containerColor = VerdeNeon)
+                    ) {
+                        Text("Cerrar Sesión", color = NegroFondo)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TiendaScreen() {
+    val context = LocalContext.current
     val database = AppDatabase.getDatabase(context)
     val factory = ViewModelFactory(
         ProductoRepository(database.productoDao()),
         UsuarioRepository(database.usuarioDao()),
         CarritoRepository(database.carritoDao())
     )
-
     val productoVM: ProductoViewModel = viewModel(factory = factory)
-    val usuarioVM: UsuarioViewModel = viewModel(factory = factory)
     val carritoVM: CarritoViewModel = viewModel(factory = factory)
+
     val productos by productoVM.productos.collectAsState()
-    val usuario by usuarioVM.usuario.collectAsState()
     val carrito by carritoVM.carrito.collectAsState()
     val total = carrito.sumOf { it.precioUnitario * it.cantidad }
-
-    var nombre by remember { mutableStateOf("") }
-    var edad by remember { mutableStateOf("") }
-    var correo by remember { mutableStateOf("") }
-    var contrasena by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         productoVM.popularBaseDeDatos()
@@ -57,111 +242,12 @@ fun FormScreen() {
     Column(
         modifier = Modifier
             .background(NegroFondo)
-            .padding(16.dp)
             .fillMaxSize()
+            .padding(16.dp)
     ) {
-        Text("🕹️ Level-Up Gamer", color = VerdeNeon, fontSize = 24.sp)
+        Text("🛒 Catálogo de Productos", color = VerdeNeon, fontSize = 22.sp)
         Spacer(Modifier.height(10.dp))
 
-        //Usuario
-        if (usuario == null) {
-            Text("Iniciar sesión o registrarse", color = BlancoTexto)
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = nombre,
-                onValueChange = { nombre = it },
-                label = { Text("Nombre (solo para registro)") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = BlancoTexto,
-                    unfocusedTextColor = GrisClaroTexto,
-                    cursorColor = VerdeNeon,
-                    focusedBorderColor = VerdeNeon,
-                    unfocusedBorderColor = Color.Gray
-                )
-            )
-
-            OutlinedTextField(
-                value = edad,
-                onValueChange = { edad = it },
-                label = { Text("Edad (solo para registro)") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = BlancoTexto,
-                    unfocusedTextColor = GrisClaroTexto,
-                    cursorColor = VerdeNeon,
-                    focusedBorderColor = VerdeNeon,
-                    unfocusedBorderColor = Color.Gray
-                )
-            )
-
-            OutlinedTextField(
-                value = correo,
-                onValueChange = { correo = it },
-                label = { Text("Correo") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = BlancoTexto,
-                    unfocusedTextColor = GrisClaroTexto,
-                    cursorColor = VerdeNeon,
-                    focusedBorderColor = VerdeNeon,
-                    unfocusedBorderColor = Color.Gray
-                )
-            )
-
-            OutlinedTextField(
-                value = contrasena,
-                onValueChange = { contrasena = it },
-                label = { Text("Contraseña") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = BlancoTexto,
-                    unfocusedTextColor = GrisClaroTexto,
-                    cursorColor = VerdeNeon,
-                    focusedBorderColor = VerdeNeon,
-                    unfocusedBorderColor = Color.Gray
-                )
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(onClick = {
-                    if (nombre.isNotBlank() && edad.isNotBlank() && correo.isNotBlank() && contrasena.isNotBlank()) {
-                        usuarioVM.registrar(nombre, correo, contrasena)
-                        Toast.makeText(context, "Usuario registrado", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Completa todos los campos", Toast.LENGTH_SHORT).show()
-                    }
-                }) {
-                    Text("Registrar")
-                }
-
-                Button(onClick = {
-                    if (correo.isNotBlank() && contrasena.isNotBlank()) {
-                        usuarioVM.login(correo, contrasena)
-                    } else {
-                        Toast.makeText(context, "Correo y contraseña requeridos", Toast.LENGTH_SHORT).show()
-                    }
-                }) {
-                    Text("Ingresar")
-                }
-            }
-        } else {
-            Text("Hola, ${usuario!!.nombre}", color = BlancoTexto, fontSize = 20.sp)
-            Button(onClick = { usuarioVM.logout() }) {
-                Text("Cerrar Sesión")
-            }
-        }
-
-        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
-
-        //Catálogo
-        Text("Catálogo", color = BlancoTexto, fontSize = 18.sp)
         LazyColumn(Modifier.weight(1f)) {
             items(productos) { producto ->
                 Card(
@@ -185,53 +271,36 @@ fun FormScreen() {
                             onClick = { carritoVM.agregarProducto(producto) },
                             colors = ButtonDefaults.buttonColors(containerColor = VerdeNeon)
                         ) {
-                            Text(text = "Agregar", color = NegroFondo)
+                            Text("Agregar", color = NegroFondo)
                         }
                     }
                 }
             }
         }
 
-        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
-
-        //Carrito
+        Divider(color = Color.Gray)
         Text("Carrito", color = BlancoTexto, fontSize = 18.sp)
         if (carrito.isEmpty()) {
             Text("Tu carrito está vacío.", color = GrisClaroTexto)
         } else {
             carrito.forEach { item ->
-                Text(
-                    "• ${item.codigoProducto} x${item.cantidad} = ${item.precioUnitario * item.cantidad} CLP",
-                    color = GrisClaroTexto
-                )
+                Text("• ${item.codigoProducto} x${item.cantidad} = ${item.precioUnitario * item.cantidad} CLP", color = GrisClaroTexto)
             }
+        }
 
-            Spacer(Modifier.height(8.dp))
-            Text("Total: $total CLP", color = VerdeNeon, fontSize = 20.sp)
+        Spacer(Modifier.height(8.dp))
+        Text("Total: $total CLP", color = VerdeNeon, fontSize = 20.sp)
+        Spacer(Modifier.height(8.dp))
 
-            Spacer(Modifier.height(8.dp))
-
-            //Pagar
-            Button(
-                onClick = {
-                    Toast.makeText(context, "Pago realizado con éxito 🎮", Toast.LENGTH_SHORT).show()
-                    carritoVM.vaciarCarrito()
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = VerdeNeon)
-            ) {
-                Text("Pagar", color = NegroFondo, fontSize = 16.sp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(onClick = { carritoVM.vaciarCarrito() }) {
+                Text("Vaciar")
             }
-
-            Spacer(Modifier.height(8.dp))
-
-            //Vaciar
-            Button(
-                onClick = { carritoVM.vaciarCarrito() },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-            ) {
-                Text("Vaciar Carrito", color = BlancoTexto)
+            Button(onClick = {}) {
+                Text("Pagar")
             }
         }
     }
