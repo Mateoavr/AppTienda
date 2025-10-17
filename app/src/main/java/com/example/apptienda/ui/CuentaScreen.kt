@@ -1,5 +1,6 @@
 package com.example.apptienda.ui.theme
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,9 +9,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.apptienda.R
 import com.example.apptienda.viewmodel.UsuarioViewModel
 
 @Composable
@@ -20,7 +23,6 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
     var nombre by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
     var edad by remember { mutableStateOf("") }
-    var genero by remember { mutableStateOf("Otro") }
     var contrasena by remember { mutableStateOf("") }
 
     Column(
@@ -38,7 +40,19 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium
         ) {
-            Column(Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.tu_imagen),
+                    contentDescription = "Icono de Usuario",
+                    modifier = Modifier
+                        .size(150.dp)
+                        .padding(bottom = 16.dp)
+                )
+
                 if (usuario == null) {
                     Text("Registro / Ingreso", color = BlancoTexto, fontSize = 18.sp)
                     Spacer(Modifier.height(8.dp))
@@ -88,7 +102,6 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                     )
 
 
-
                     OutlinedTextField(
                         value = contrasena,
                         onValueChange = { contrasena = it },
@@ -101,7 +114,6 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                             cursorColor = VerdeNeon,
                             focusedBorderColor = VerdeNeon,
                             unfocusedBorderColor = Color.Gray
-
                         )
                     )
 
@@ -120,6 +132,7 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                         ) {
                             Text("Registrar", color = NegroFondo)
                         }
+
                         Button(
                             onClick = { usuarioVM.login(correo, contrasena) },
                             colors = ButtonDefaults.buttonColors(containerColor = VerdeNeon)
@@ -127,11 +140,10 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                             Text("Ingresar", color = NegroFondo)
                         }
                     }
-                } else {
 
+                } else {
                     Text("Bienvenido, ${usuario!!.nombre}", color = BlancoTexto, fontSize = 20.sp)
                     Text("Correo: ${usuario!!.correo}", color = GrisClaroTexto, fontSize = 14.sp)
-
                     Spacer(Modifier.height(8.dp))
                     Button(
                         onClick = { usuarioVM.logout() },

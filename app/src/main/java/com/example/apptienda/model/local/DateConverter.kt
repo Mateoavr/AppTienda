@@ -1,5 +1,6 @@
 package com.example.apptienda.model.local
 
+
 import androidx.room.TypeConverter
 import java.util.Date
 

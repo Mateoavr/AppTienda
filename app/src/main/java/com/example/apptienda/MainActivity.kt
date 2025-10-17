@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTiendaTheme {
-                // --- CREACIÓN DE DEPENDENCIAS (UNA SOLA VEZ) ---
+
                 val context = LocalContext.current
                 val database = remember { AppDatabase.getDatabase(context) }
                 val factory = remember {
@@ -37,13 +37,13 @@ class MainActivity : ComponentActivity() {
                     ViewModelFactory(productoRepo, usuarioRepo, carritoRepo)
                 }
 
-                // Creación de los ViewModels que se compartirán
+
                 val usuarioVM: UsuarioViewModel = viewModel(factory = factory)
                 val productoVM: ProductoViewModel = viewModel(factory = factory)
                 val carritoVM: CarritoViewModel = viewModel(factory = factory)
 
-                // --- NAVEGACIÓN Y UI ---
-                var selectedTab by remember { mutableStateOf(0) } // <-- CORRECCIÓN: 'remember' está ahora dentro de un Composable
+
+                var selectedTab by remember { mutableStateOf(0) }
 
                 Scaffold(
                     bottomBar = {
@@ -66,8 +66,8 @@ class MainActivity : ComponentActivity() {
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         when (selectedTab) {
-                            0 -> CuentaScreen(usuarioVM) // Pasa el ViewModel
-                            1 -> TiendaScreen(productoVM, carritoVM) // Pasa los ViewModels
+                            0 -> CuentaScreen(usuarioVM)
+                            1 -> TiendaScreen(productoVM, carritoVM,usuarioVM)
                         }
                     }
                 }

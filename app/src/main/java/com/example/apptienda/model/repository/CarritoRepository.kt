@@ -12,11 +12,11 @@ class CarritoRepository(private val carritoDao: CarritoDao) {
     suspend fun agregarProducto(producto: Carrito) {
         val itemExistente = carritoDao.obtenerItem(producto.codigoProducto)
         if (itemExistente != null) {
-            // Si el producto ya está en el carrito, aumenta la cantidad
+
             itemExistente.cantidad++
             carritoDao.actualizar(itemExistente)
         } else {
-            // Si es un producto nuevo, lo inserta
+
             carritoDao.insertar(producto)
         }
     }
