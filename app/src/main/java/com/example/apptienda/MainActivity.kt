@@ -15,14 +15,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Se aplica el tema personalizado de la tienda
+
             AppTiendaTheme {
-                // Surface es el contenedor base con el color de fondo del tema
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Aquí se llama a la pantalla principal de la aplicación
                     FormScreen()
                 }
             }

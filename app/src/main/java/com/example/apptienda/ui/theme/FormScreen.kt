@@ -10,7 +10,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.TextFieldDefaults // Puedes quitarlo si no lo usas en otro lado
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -27,7 +26,6 @@ import com.example.apptienda.model.local.AppDatabase
 import com.example.apptienda.model.repository.CarritoRepository
 import com.example.apptienda.model.repository.ProductoRepository
 import com.example.apptienda.model.repository.UsuarioRepository
-import com.example.apptienda.ui.theme.*
 import com.example.apptienda.viewmodel.CarritoViewModel
 import com.example.apptienda.viewmodel.ProductoViewModel
 import com.example.apptienda.viewmodel.UsuarioViewModel
@@ -35,7 +33,7 @@ import com.example.apptienda.viewmodel.ViewModelFactory
 
 @Composable
 fun FormScreen() {
-    // --- Configuración de Dependencias ---
+
     val context = LocalContext.current
     val database = AppDatabase.getDatabase(context)
     val factory = ViewModelFactory(
@@ -47,7 +45,6 @@ fun FormScreen() {
     val usuarioVM: UsuarioViewModel = viewModel(factory = factory)
     val carritoVM: CarritoViewModel = viewModel(factory = factory)
 
-    // --- Recolección de Estados ---
     val productos by productoVM.productos.collectAsState()
     val usuario by usuarioVM.usuario.collectAsState()
     val carrito by carritoVM.carrito.collectAsState()
@@ -73,7 +70,7 @@ fun FormScreen() {
         if (usuario == null) {
             Text("Iniciar sesión o registrarse", color = BlancoTexto)
 
-            // --- Campo Nombre ---
+
             OutlinedTextField(
                 value = nombre,
                 onValueChange = { nombre = it },
@@ -88,7 +85,7 @@ fun FormScreen() {
                 )
             )
 
-            // --- Campo Correo ---
+
             OutlinedTextField(
                 value = correo,
                 onValueChange = { correo = it },
@@ -103,7 +100,7 @@ fun FormScreen() {
                 )
             )
 
-            // --- Campo Contraseña ---
+
             OutlinedTextField(
                 value = contrasena,
                 onValueChange = { contrasena = it },
@@ -136,7 +133,7 @@ fun FormScreen() {
 
         Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
 
-        // --- Catálogo ---
+
         Text("Catálogo", color = BlancoTexto, fontSize = 18.sp)
         LazyColumn(Modifier.weight(1f)) {
             items(productos) { producto ->
@@ -170,7 +167,6 @@ fun FormScreen() {
 
         Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
 
-        // --- Carrito ---
         Text("Carrito", color = BlancoTexto, fontSize = 18.sp)
         if (carrito.isEmpty()) {
             Text("Tu carrito está vacío.", color = GrisClaroTexto)

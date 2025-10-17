@@ -20,13 +20,13 @@ class UsuarioViewModel(private val repository: UsuarioRepository) : ViewModel() 
         viewModelScope.launch {
             val user = repository.login(correo, contrasena)
             _usuario.value = user
-            // Aquí podrías agregar lógica para manejar un login fallido (user == null)
+
         }
     }
 
     fun registrar(nombre: String, correo: String, contrasena: String) {
         viewModelScope.launch {
-            // Lógica de ejemplo para registrar un nuevo usuario mayor de 18
+
             val calendar = Calendar.getInstance()
             calendar.add(Calendar.YEAR, -19)
             val fechaNacimientoEjemplo: Date = calendar.time
@@ -41,7 +41,7 @@ class UsuarioViewModel(private val repository: UsuarioRepository) : ViewModel() 
                 esDuoc = esDuoc
             )
             repository.registrar(nuevoUsuario)
-            // Opcional: Iniciar sesión automáticamente después del registro
+
             _usuario.value = nuevoUsuario
         }
     }

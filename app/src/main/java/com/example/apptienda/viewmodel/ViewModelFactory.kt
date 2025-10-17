@@ -7,7 +7,7 @@ import com.example.apptienda.model.repository.ProductoRepository
 import com.example.apptienda.model.repository.UsuarioRepository
 
 
-// La fábrica ahora recibe todos los repositorios necesarios
+
 class ViewModelFactory(
     private val productoRepository: ProductoRepository,
     private val usuarioRepository: UsuarioRepository,
