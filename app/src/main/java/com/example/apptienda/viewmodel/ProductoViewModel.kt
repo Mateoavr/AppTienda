@@ -22,12 +22,15 @@ class ProductoViewModel(private val repo: ProductoRepository) : ViewModel() {
     fun popularBaseDeDatos() = viewModelScope.launch {
         val productosDemo = listOf(
             Producto("JM001", "Juegos de Mesa", "Catan", 29990, "Un clásico juego de estrategia donde los jugadores compiten por colonizar y expandirse en la isla de Catan.", 4.8f),
-        Producto("JM002", "Juegos de Mesa", "Carcassonne", 24990, "Un juego de colocación de fichas donde los jugadores construyen el paisaje medieval de Carcassonne.", 4.7f),
-        Producto("AC001", "Accesorios", "Controlador Inalámbrico Xbox Series X", 59990, "Ofrece una experiencia de juego cómoda con botones mapeables y una respuesta táctil mejorada.", 4.9f),
-        Producto("AC002", "Accesorios", "Auriculares Gamer HyperX Cloud II", 79990, "Proporcionan un sonido envolvente de calidad con un micrófono desmontable y almohadillas de espuma.", 4.6f),
-        Producto("CO001", "Consolas", "PlayStation 5", 549990, "La consola de última generación de Sony, que ofrece gráficos impresionantes y tiempos de carga ultrarrápidos.", 4.9f),
-        Producto("SG001", "Sillas Gamers", "Silla Gamer Secretlab Titan", 349990, "Diseñada para el máximo confort, esta silla ofrece un soporte ergonómico y personalización ajustable.", 4.7f),
-        Producto("MS001", "Mouse", "Mouse Gamer Logitech G502 HERO", 49990, "Con sensor de alta precisión y botones personalizables, ideal para gamers que buscan control.", 4.8f)
+            Producto("JM002", "Juegos de Mesa", "Carcassonne", 24990, "Un juego de colocación de fichas donde los jugadores construyen el paisaje medieval de Carcassonne.", 4.7f),
+            Producto("AC001", "Accesorios", "Controlador Inalámbrico Xbox Series X", 59990, "Ofrece una experiencia de juego cómoda con botones mapeables y una respuesta táctil mejorada.", 4.9f),
+            Producto("AC002", "Accesorios", "Auriculares Gamer HyperX Cloud II", 79990, "Proporcionan un sonido envolvente de calidad con un micrófono desmontable y almohadillas de espuma.", 4.6f),
+            Producto("CO001", "Consolas", "PlayStation 5", 549990, "La consola de última generación de Sony, que ofrece gráficos impresionantes y tiempos de carga ultrarrápidos.", 4.9f),
+            Producto("SG001", "Sillas Gamers", "Silla Gamer Secretlab Titan", 349990, "Diseñada para el máximo confort, esta silla ofrece un soporte ergonómico y personalización ajustable.", 4.7f),
+            Producto("MS001", "Mouse", "Mouse Gamer Logitech G502 HERO", 49990, "Con sensor de alta precisión y botones personalizables, ideal para gamers que buscan control.", 4.8f),
+            Producto("CG001", "Computadores Gamers  ", "PC Gamer ASUS ROG Strix ", 49990, "Un potente equipo diseñado para los gamers más exigentes equipado con los últimos componentes para ofrecer un rendimiento excepcional cualquier juego", 4.8f),
+            Producto("MP001", "Mousepad", "Mousepad Razer Goliathus Extended Chroma", 49990, "Ofrece un área de juego amplia con iluminación RGB personalizable, asegurando una superficie suave y uniforme para el movimiento del mouse.", 4.8f),
+            Producto("PP001", "Poleras Personalizadas", "Polera Gamer Personalizada 'Level-Up' ", 14990, ": Una camiseta cómoda y estilizada, con la posibilidad de personalizarla con tu gamer tag o diseño favorito.", 4.8f)
         )
         repo.insertarProductos(productosDemo)
     }
