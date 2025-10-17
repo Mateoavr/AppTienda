@@ -6,15 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-
 @Database(entities = [Producto::class, Usuario::class, Carrito::class], version = 1)
-
-@TypeConverters(DateConverter::class) // <--- ¡ESTA LÍNEA ES LA SOLUCIÓN!
+@TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun productoDao(): ProductoDao
     abstract fun usuarioDao(): UsuarioDao
-    // abstract fun carritoDao(): CarritoDao // TODO: Agrega el DAO del carrito
+    abstract fun carritoDao(): CarritoDao
 
     companion object {
         @Volatile

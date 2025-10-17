@@ -12,4 +12,8 @@ interface UsuarioDao {
 
     @Query("SELECT * FROM usuarios WHERE correo = :correo LIMIT 1")
     fun obtenerUsuarioPorCorreo(correo: String): Flow<Usuario?>
+
+    // --- FUNCIÓN NUEVA ---
+    @Query("SELECT * FROM usuarios WHERE correo = :correo AND contrasena = :contrasena LIMIT 1")
+    suspend fun login(correo: String, contrasena: String): Usuario?
 }
