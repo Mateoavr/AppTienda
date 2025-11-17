@@ -66,6 +66,13 @@ implementation("androidx.activity:activity-compose:$activityCompose")
 implementation("androidx.navigation:navigation-compose:$navCompose")
 
 
+    testImplementation ("io.mockk:mockk:1.13.10")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
+
+
 implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
 implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${lifecycleVersion}")
@@ -93,4 +100,5 @@ androidTestImplementation(platform(libs.androidx.compose.bom))
 androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 debugImplementation(libs.androidx.compose.ui.tooling)
 debugImplementation(libs.androidx.compose.ui.test.manifest)
+    testImplementation(kotlin("test"))
 }
