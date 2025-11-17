@@ -11,7 +11,7 @@ import com.example.apptienda.model.repository.UsuarioRepository
 class ViewModelFactory(
     private val productoRepository: ProductoRepository,
     private val usuarioRepository: UsuarioRepository,
-   private val carritoRepository: CarritoRepository
+    private val carritoRepository: CarritoRepository
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -19,13 +19,16 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(ProductoViewModel::class.java) -> {
                 ProductoViewModel(productoRepository) as T
             }
+
             modelClass.isAssignableFrom(UsuarioViewModel::class.java) -> {
                 UsuarioViewModel(usuarioRepository) as T
             }
-              modelClass.isAssignableFrom(CarritoViewModel::class.java) -> {
-              CarritoViewModel(carritoRepository) as T
+
+            modelClass.isAssignableFrom(CarritoViewModel::class.java) -> {
+                CarritoViewModel(carritoRepository) as T
             }
-            else -> throw IllegalArgumentException("Unknown ViewModel class")
+
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
 }

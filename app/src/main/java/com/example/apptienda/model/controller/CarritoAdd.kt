@@ -1,14 +1,14 @@
-package com.example.apptienda.model.local
+package com.example.apptienda.model.controller
 
-import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
 
 
-data class Carrito(
+data class CarritoAdd(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val productoCodigo: String,
-    val cantidad: Int,
+    var cantidad: Int,
     val precioUnitario: Int,
+    val usuarioId:Long,
+    val nombreProducto: String
 )
