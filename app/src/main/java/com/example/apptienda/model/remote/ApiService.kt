@@ -15,7 +15,7 @@ import retrofit2.http.Path
 
 interface ApiService {
 
-    @GET("api/productos")
+    @GET("api/producto")
     suspend fun getProductos(): Response<List<Producto>>
 
     @POST("api/login")

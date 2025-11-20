@@ -93,7 +93,7 @@ class UsuarioViewModel(
         Log.d("FECHA_DEBUG", "Valor recibido: $fechaNacimientoStr")
 
         return try {
-            val formato = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+            val formato = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val birthDate = formato.parse(fechaNacimientoStr) ?: return 0
 
             val today = Calendar.getInstance()
