@@ -56,7 +56,7 @@ class TestProducto {
     }
 
     @Test
-    fun `test cargarProductos exitoso actualiza el StateFlow`() = runTest {
+    fun `test cargarProductos exitoso actualiza `() = runTest {
 
         coEvery { mockRepository.obtenerProductos() } returns listaProductosPrueba
 

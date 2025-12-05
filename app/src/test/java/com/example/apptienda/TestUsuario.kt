@@ -40,7 +40,7 @@ class TestUsuario {
     }
 
     @Test
-    fun `test login exitoso actualiza el StateFlow del usuario`() = runTest {
+    fun `test login exitoso actualiza el usuario`() = runTest {
         coEvery { mockRepository.login("mateo@test.com", "123") } returns usuarioPrueba
 
         viewModel.login("mateo@test.com", "123")
