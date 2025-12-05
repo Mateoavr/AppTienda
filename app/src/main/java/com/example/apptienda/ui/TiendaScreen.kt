@@ -135,10 +135,10 @@ fun TiendaScreen(
                             model = urlImagen,
                             contentDescription = producto.nombre,
                             modifier = Modifier
-                                .size(80.dp) // Tamaño de la imagen
-                                .clip(RoundedCornerShape(8.dp)) // Bordes redondeados
-                                .padding(end = 12.dp), // Espacio entre imagen y texto
-                            contentScale = ContentScale.Crop // Recorta la imagen para llenar el cuadrado
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .padding(end = 12.dp),
+                            contentScale = ContentScale.Crop
                         )
 
                         Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
