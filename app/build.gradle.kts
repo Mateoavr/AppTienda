@@ -58,7 +58,8 @@ implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.core:core-ktx:1.13.1")
 
 implementation("androidx.compose.material3:material3")
-
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("io.coil-kt:coil-compose:2.5.0")
 implementation("androidx.compose.material:material-icons-extended:1.6.8")
 
 

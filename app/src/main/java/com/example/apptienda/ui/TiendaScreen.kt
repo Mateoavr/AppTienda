@@ -1,6 +1,6 @@
 package com.example.apptienda.ui.theme
 
-
+import coil.compose.AsyncImage
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -21,7 +22,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -126,6 +129,17 @@ fun TiendaScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val urlImagen = "http://10.0.2.2:8080/imagen/${producto.imagen}"
+
+                        AsyncImage(
+                            model = urlImagen,
+                            contentDescription = producto.nombre,
+                            modifier = Modifier
+                                .size(80.dp) // Tamaño de la imagen
+                                .clip(RoundedCornerShape(8.dp)) // Bordes redondeados
+                                .padding(end = 12.dp), // Espacio entre imagen y texto
+                            contentScale = ContentScale.Crop // Recorta la imagen para llenar el cuadrado
+                        )
 
                         Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                             Text(text = producto.nombre, color = BlancoTexto, fontSize = 16.sp)
