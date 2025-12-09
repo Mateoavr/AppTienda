@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,12 +27,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.apptienda.R
+import com.example.apptienda.model.local.Compra
 import com.example.apptienda.viewmodel.UsuarioViewModel
 
 
@@ -50,14 +53,14 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
     var fechaNacimientoStr by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-
+    val historial by usuarioVM.historial.collectAsState()
 
     val NegroFondo = Color(0xFF121212L)
     val VerdeNeon = Color(0xFF39FF14L)
     val BlancoTexto = Color.White
     val GrisClaroTexto = Color.LightGray
     val GrisOscuroCard = Color(0xFF1E1E1EL)
-
+    val GrisHistorial = Color(0xFF2C2C2C)
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -100,14 +103,13 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
 
 
                 Image(
-                    painter = painterResource(id = R.drawable.tu_imagen), // Reemplaza con tu imagen
+                    painter = painterResource(id = R.drawable.tu_imagen),
                     contentDescription = "Foto de perfil",
                     modifier = Modifier
                         .size(150.dp)
                         .padding(bottom = 16.dp)
-                        .clip(CircleShape) // Siempre redondo
+                        .clip(CircleShape)
                         .then(
-                            // Solo permite hacer clic si el usuario está logueado
                             if (usuario != null) {
                                 Modifier.clickable { galleryLauncher.launch("image/*") }
                             } else Modifier
@@ -119,7 +121,6 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                     Text("Regístrate o Ingresa", color = BlancoTexto, fontSize = 18.sp)
                     Spacer(Modifier.height(16.dp))
 
-                    // --- Campo Nombre ---
                     OutlinedTextField(
                         value = nombre,
                         onValueChange = {
@@ -137,7 +138,7 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                             unfocusedBorderColor = Color.Gray
                         )
                     )
-                    Spacer(Modifier.height(8.dp)) // Añadido
+                    Spacer(Modifier.height(8.dp))
 
 
                     OutlinedTextField(
@@ -158,7 +159,7 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                             unfocusedBorderColor = Color.Gray
                         )
                     )
-                    Spacer(Modifier.height(8.dp)) // Añadido
+                    Spacer(Modifier.height(8.dp))
 
 
                     OutlinedTextField(
@@ -179,7 +180,7 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                             unfocusedBorderColor = Color.Gray
                         )
                     )
-                    Spacer(Modifier.height(8.dp)) // Añadido
+                    Spacer(Modifier.height(8.dp))
 
 
                     OutlinedTextField(
@@ -258,7 +259,40 @@ fun CuentaScreen(usuarioVM: UsuarioViewModel) {
                     Text("Edad: $edadCalculada", color = GrisClaroTexto, fontSize = 14.sp)
 
                     Spacer(Modifier.height(16.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(GrisHistorial, RoundedCornerShape(12.dp))
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "HISTORIAL COMPRAS",
+                            color = VerdeNeon,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
 
+                        historial.forEachIndexed { index, item ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(item.nombre, color = BlancoTexto, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                    Text(item.fecha, color = Color.Gray, fontSize = 12.sp)
+                                }
+                                Text(item.precio, color = GrisClaroTexto, fontSize = 14.sp)
+                            }
+
+                            if (index < historial.size - 1) {
+                                HorizontalDivider(color = Color.Gray.copy(alpha = 0.3f))
+                            }
+                        }
+                    }
 
                     Button(
                         onClick = {

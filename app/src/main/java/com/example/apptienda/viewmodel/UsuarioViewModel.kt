@@ -5,6 +5,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.apptienda.model.local.Compra
+import com.example.apptienda.model.local.Producto
 import com.example.apptienda.model.local.Usuario
 
 
@@ -13,10 +15,12 @@ import com.example.apptienda.model.repository.ProductoRepository
 import com.example.apptienda.model.repository.UsuarioRepository
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 
 import java.util.Locale
 
@@ -27,7 +31,8 @@ class UsuarioViewModel(
 
     private val _usuario = MutableStateFlow<Usuario?>(null)
     val usuario = _usuario.asStateFlow()
-
+    private val _historial = MutableStateFlow<List<Compra>>(emptyList())
+    val historial = _historial.asStateFlow()
     private val _fotoUri = MutableStateFlow<Uri?>(null)
     val fotoUri = _fotoUri.asStateFlow()
 
@@ -135,5 +140,19 @@ class UsuarioViewModel(
 
     private fun getFilePathFromUri(uri: Uri, context: Context): String? {
         return uri.path
+    }
+    fun agregarAlHistorial(productosCarrito: List<Producto>) {
+        val fechaHoy = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date())
+
+        val nuevasCompras = productosCarrito.map { producto ->
+            Compra(
+                nombre = producto.nombre,
+                fecha = fechaHoy,
+                precio = "$${producto.precio}"
+            )
+        }
+
+
+        _historial.value = nuevasCompras + _historial.value
     }
 }

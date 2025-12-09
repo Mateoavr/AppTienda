@@ -3,6 +3,7 @@ package com.example.apptienda.model.remote
 
 import com.example.apptienda.model.controller.CarritoAdd
 import com.example.apptienda.model.local.Producto
+import com.example.apptienda.model.local.Resenia
 import com.example.apptienda.model.local.Usuario
 import com.example.apptienda.model.repository.ProductoRepository
 
@@ -35,4 +36,9 @@ interface ApiService {
 
     @POST("api/carrito/agregar")
     suspend fun agregarAlCarrito(@Body item: CarritoAdd): Response<Unit>
+
+    @POST("resenias")
+    suspend fun enviarResenia(@Body resenia: Resenia): Response<Void>
+    @POST("resenias")
+    suspend fun crearResenia(@Body resenia: Resenia): Response<Void>
 }
