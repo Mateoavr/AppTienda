@@ -8,6 +8,7 @@ import com.example.apptienda.model.local.Resenia
 import com.example.apptienda.model.repository.ProductoRepository
 import com.example.apptienda.model.repository.ReseniaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -17,7 +18,8 @@ class ProductoViewModel(
     private val repo: ProductoRepository,
     private val reseniaRepo: ReseniaRepository
 ) : ViewModel() {
-
+    private val _reseniasSeleccionadas = MutableStateFlow<List<Resenia>>(emptyList())
+    val reseniasSeleccionadas: StateFlow<List<Resenia>> = _reseniasSeleccionadas.asStateFlow()
     private val _productos = MutableStateFlow<List<Producto>>(emptyList())
     val productos = _productos.asStateFlow()
 
@@ -52,6 +54,19 @@ class ProductoViewModel(
 
             } catch (e: Exception) {
                 Log.e("ProductoViewModel", "Error al enviar reseña", e)
+            }
+        }
+    }
+    fun cargarResenias(codigo: String) {
+        viewModelScope.launch {
+            try {
+                _reseniasSeleccionadas.value = emptyList()
+                val listaResenias = reseniaRepo.obtenerResenias(codigo)
+                _reseniasSeleccionadas.value = listaResenias
+
+            } catch (e: Exception) {
+                Log.e("ProductoViewModel", "Error al cargar reseñas", e)
+                _reseniasSeleccionadas.value = emptyList()
             }
         }
     }

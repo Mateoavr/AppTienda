@@ -41,4 +41,7 @@ interface ApiService {
     suspend fun enviarResenia(@Body resenia: Resenia): Response<Void>
     @POST("resenias")
     suspend fun crearResenia(@Body resenia: Resenia): Response<Void>
+
+    @GET("resenias/{codigo}")
+    suspend fun obtenerResenias(@Path("codigo") codigo: String): List<Resenia>
 }

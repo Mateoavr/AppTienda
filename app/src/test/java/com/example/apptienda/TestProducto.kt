@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 
 import com.example.apptienda.model.local.Producto
 import com.example.apptienda.model.repository.ProductoRepository
+import com.example.apptienda.model.repository.ReseniaRepository
 import com.example.apptienda.viewmodel.ProductoViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -24,7 +25,7 @@ class TestProducto {
 
     private lateinit var mockRepository: ProductoRepository
     private lateinit var viewModel: ProductoViewModel
-
+    private lateinit var mockReseniaRepo: ReseniaRepository
 
     private val listaProductosPrueba = listOf(
         Producto(
@@ -47,7 +48,8 @@ class TestProducto {
     @Before
     fun setUp() {
         mockRepository = mockk()
-        viewModel = ProductoViewModel(mockRepository)
+        mockReseniaRepo = mockk(relaxed = true)
+        viewModel = ProductoViewModel(mockRepository, mockReseniaRepo)
     }
 
     @Test

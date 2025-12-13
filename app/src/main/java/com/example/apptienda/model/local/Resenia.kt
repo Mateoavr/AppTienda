@@ -5,5 +5,5 @@ data class Resenia(
     val codigo: String,
     val usuario: String,
     val comentario: String,
-    val calificacion: Int
+    val calificacion: Int,
 )

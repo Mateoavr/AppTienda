@@ -22,4 +22,12 @@ class ReseniaRepository (private val api: ApiService) {
             false
         }
     }
+
+    suspend fun obtenerResenias(codigo: String): List<Resenia> {
+        return try {
+            api.obtenerResenias(codigo)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
 }

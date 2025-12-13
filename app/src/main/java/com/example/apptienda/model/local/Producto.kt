@@ -10,5 +10,6 @@ data class Producto(
     val precio: Int,
     val descripcion: String,
     val rating: Float? = null,
-    val imagen: String? = null
+    val imagen: String? = null,
+    val resenias: List<Resenia> = emptyList()
 )

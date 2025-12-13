@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
@@ -30,6 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,19 +57,8 @@ fun TiendaScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val productosFiltrados = if (searchText.isBlank()) {
-        todosLosProductos
-    } else {
-        todosLosProductos.filter {
-            it.nombre.contains(searchText, ignoreCase = true) ||
-                    it.categoria.contains(searchText, ignoreCase = true)
-        }
-    }
-
-    val total = carrito.sumOf { it.precioUnitario * it.cantidad }
-    val nombreUsuario = usuario?.nombre ?: "Invitado"
-
-
+    var productoVerDetalles by remember { mutableStateOf<Producto?>(null) }
+    val reseniasSeleccionadas by productoVM.reseniasSeleccionadas.collectAsState()
     var productoAcalificar by remember { mutableStateOf<Producto?>(null) }
     var ratingSeleccionado by remember { mutableIntStateOf(0) }
     var comentarioResena by remember { mutableStateOf("") }
@@ -78,7 +70,6 @@ fun TiendaScreen(
     val GrisClaroTexto = Color.LightGray
     val GrisOscuroCard = Color(0xFF1C1C1CL)
     val GrisFondoTextField = Color(0xFF1E1E1EL)
-
     LaunchedEffect(Unit) { productoVM.cargarProductos() }
 
     LaunchedEffect(usuario) {
@@ -86,6 +77,18 @@ fun TiendaScreen(
             carritoVM.cargarCarrito(idUsuario)
         } ?: carritoVM.limpiarCarritoLocal()
     }
+
+    val productosFiltrados = if (searchText.isBlank()) {
+        todosLosProductos
+    } else {
+        todosLosProductos.filter {
+            it.nombre.contains(searchText, ignoreCase = true) ||
+                    it.categoria.contains(searchText, ignoreCase = true)
+        }
+    }
+
+    val total = carrito.sumOf { it.precioUnitario * it.cantidad }
+    val nombreUsuario = usuario?.nombre ?: "Invitado"
 
     Column(
         modifier = Modifier
@@ -117,12 +120,18 @@ fun TiendaScreen(
         )
         Spacer(Modifier.height(10.dp))
 
+
         LazyColumn(Modifier.weight(1f)) {
             items(productosFiltrados) { producto ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 6.dp),
+                        .padding(vertical = 6.dp)
+
+                        .clickable {
+                            productoVerDetalles = producto
+                            productoVM.cargarResenias(producto.codigo)
+                        },
                     colors = CardDefaults.cardColors(containerColor = GrisOscuroCard),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
@@ -142,7 +151,6 @@ fun TiendaScreen(
                         )
 
                         Spacer(modifier = Modifier.width(12.dp))
-
 
                         Column(
                             modifier = Modifier.weight(1f)
@@ -171,6 +179,7 @@ fun TiendaScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row {
+
                                     IconButton(
                                         onClick = {
                                             val intent = Intent(Intent.ACTION_SEND).apply {
@@ -188,6 +197,7 @@ fun TiendaScreen(
                                     }
 
                                     Spacer(modifier = Modifier.width(8.dp))
+
 
                                     IconButton(
                                         onClick = {
@@ -231,6 +241,7 @@ fun TiendaScreen(
         }
 
         Divider(color = Color.Gray, modifier = Modifier.padding(vertical = 8.dp))
+
         Text("Carrito", color = BlancoTexto, fontSize = 18.sp)
         Spacer(Modifier.height(4.dp))
 
@@ -294,6 +305,68 @@ fun TiendaScreen(
         }
     }
 
+
+    if (productoVerDetalles != null) {
+        AlertDialog(
+            onDismissRequest = { productoVerDetalles = null },
+            containerColor = GrisOscuroCard,
+            title = {
+                Text(
+                    text = "Reseñas: ${productoVerDetalles!!.nombre}",
+                    color = VerdeNeon,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            text = {
+                val listaResenias = reseniasSeleccionadas
+
+                if (listaResenias.isEmpty()) {
+                    Text("Aún no hay reseñas para este producto.", color = GrisClaroTexto)
+                } else {
+                    LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
+                        items(listaResenias) { resenia ->
+                            Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Filled.Person, contentDescription = null, tint = VerdeNeon, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = resenia.usuario ?: "Anónimo",
+                                        color = BlancoTexto,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp
+                                    )
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Row {
+                                        repeat(resenia.calificacion) {
+                                            Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFFFFD700), modifier = Modifier.size(12.dp))
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Text(
+                                    text = resenia.comentario,
+                                    color = GrisClaroTexto,
+                                    fontSize = 13.sp,
+                                    fontStyle = FontStyle.Italic
+                                )
+                                HorizontalDivider(color = Color.DarkGray, modifier = Modifier.padding(top = 8.dp))
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { productoVerDetalles = null }) {
+                    Text("Cerrar", color = VerdeNeon)
+                }
+            }
+        )
+    }
+
+
     if (productoAcalificar != null) {
         AlertDialog(
             onDismissRequest = { productoAcalificar = null },
@@ -353,7 +426,6 @@ fun TiendaScreen(
         )
     }
 }
-
 @Composable
 fun RatingBarInteractivo(
     rating: Int,
@@ -373,4 +445,3 @@ fun RatingBarInteractivo(
         }
     }
 }
-
